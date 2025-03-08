@@ -1,21 +1,819 @@
-<h1>  这个是个测试主页    </h1
-h1>  这个是个测试主页    </h1><h1>  这个是个测试主页    </h1><h1>  这个是个测试主页    </h1><h1>  这个是个测试主页    </h1>
-<h1>  这个是个测试主页    </h1>
-<h1>  这个是个测试主页    </h1>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIM合同计算器 V3.0</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f6fa;
+        }
+        .calculator {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #343a40;
+        }
+        .input-group {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .input-group label {
+            font-weight: bold;
+            margin-right: 10px;
+            width: 120px;
+        }
+        .input-group .unit {
+            margin-left: 10px;
+        }
+        input[type="number"], input[type="text"] {
+            width: 200px;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            background: #fff;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.075);
+            min-width: 0;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            transition: background 0.3s;
+        }
+        button.secondary {
+            background: #6c757d;
+            color: white;
+            transition: background 0.3s;
+        }
+        button.secondary:hover {
+            background: #5a6268;
+        }
+        button:hover {
+            background: #0062cc;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #e9ecef;
+            border-radius: 4px;
+            font-size: 16px;
+            color: #343a40;
+        }
+        .result p {
+            margin: 10px 0;
+        }
+        .result p span {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #e9ecef;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+        .actions {
+            margin-top: 15px;
+            text-align: right;
+        }
+        .payment-stages-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        .toggle-button {
+            position: relative;
+            padding-left: 30px;
+            cursor: pointer;
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+        }
+        .toggle-button::before {
+            content: '▼';
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 18px;
+            color: #007bff;
+        }
+        .toggle-button.expanded::before {
+            content: '▲';
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .button-group button {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .button-group button:last-child {
+            margin-right: 0;
+        }
+        .help-icon {
+            cursor: pointer;
+            color: #28a745;
+            font-size: 20px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        #helpContent {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .help-content {
+            display: none;
+        }
+        .help-content h3 {
+            text-align: center;
+        }
+        .help-content ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .help-content ul li {
+            text-align: left;
+        }
+        .help-content p {
+            text-align: left;
+        }
+        .help-content p:last-child {
+            text-align: right;
+        }
+        .contract-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .contract-toggle-button {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            transition: background 0.3s;
+            width: 100%;
+            text-align: left;
+        }
+        .contract-toggle-button.expanded {
+            background: #0062cc;
+        }
+        .contract-content {
+            display: none;
+            margin-top: 10px;
+        }
+        .save-open-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .save-open-toggle-button {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            transition: background 0.3s;
+            width: 100%;
+            text-align: left;
+        }
+        .save-open-toggle-button.expanded {
+            background: #0062cc;
+        }
+        .save-open-content {
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>BIM合同计算器 V3.0</h1>
 
-<h1>  这个是个测试主页    </h1>
-<h1>  这个是个测试主页    </h1><h1>  这个是个测试主页    </h1>
-<h1>  这个是个测试主页    </h1><h1>  这个是个测试主页    </h1><h1>  这个是个测试主页    </h1>
-<h1>  这个是个测试主页    </h1><h1>  这个是个测试主页    </h1>
+        <!-- 项目字段 -->
+        <div class="input-group">
+            <label style="font-weight: bold; color: #000;">项目名称：</label>
+            <input type="text" id="projectName" placeholder="请输入项目名称">
+        </div>
 
-这个是个测试主页
-这个是个测试主页
-这个是个测试主页
-这个是个测试主页
-这个是个测试主页
-这个是个测试主页
-这个是个测试主页这个是个测试主页
+        <!-- 标准合同内容 -->
+        <div id="standardContract" class="contract-content" style="display: block;">
+            <!-- 输入字段 -->
+            <div class="input-group">
+                <label>总价（含税）：</label>
+                <input type="number" id="withTaxPrice" placeholder="请输入总价（含税）" min="0" oninput="updateWithoutTaxPrice()">
+                <span class="unit">元</span>
+            </div>
+            <div class="input-group">
+                <label>总价（不含税）：</label>
+                <input type="number" id="withoutTaxPrice" placeholder="请输入总价（不含税）" min="0" oninput="updateWithTaxPrice()">
+                <span class="unit">元</span>
+            </div>
+            <div class="input-group">
+                <label>增值税费用：</label>
+                <input type="number" id="vat" placeholder="增值税费用" readonly>
+                <span class="unit">元</span>
+            </div>
+            <div class="input-group">
+                <label>税率：</label>
+                <input type="number" id="taxRate" value="3" step="0.01" min="0" oninput="updateVAT()">
+                <span class="unit">%</span>
+            </div>
 
-这个是个测试主页这个是个测试主页这个是个测试主页这个是个测试主页这个是个测试主页这个是个测试主页
-这个是个测试主页
-这个是个测试主页
+            <!-- 使用说明按钮 -->
+            <div style="text-align: right;">
+                <button class="secondary" onclick="toggleHelp()" style="width: auto; font-size: 14px; padding: 8px 16px;">？ 使用说明</button>
+            </div>
+
+            <!-- 使用说明内容 -->
+            <div id="helpContent" class="help-content" style="clear: both;">
+                <h3>使用说明</h3>
+                <ul>
+                    <li>输入“总价（含税）”或“总价（不含税）”，另一个字段会自动更新。</li>
+                    <li>税率默认为3%，可以修改。</li>
+                    <li>增值税费用会根据总价和税率自动计算并显示。</li>
+                    <li>点击“设置付款阶段”按钮展开付款阶段设置。</li>
+                    <li>在展开状态下，可以添加、删除和编辑付款阶段。</li>
+                    <li>输入阶段比例时，如果总比例超过100%，会立即提示，并且不能退出设置窗口。</li>
+                    <li>点击“完成”按钮后，会验证比例总和是否为100%，如果正确则折叠付款阶段设置窗口。</li>
+                    <li>点击“保存”按钮将计算结果导出为TXT文件。</li>
+                </ul>
+                <p>开发者：CANGELLX<br>时间：2025年3月</p>
+            </div>
+
+            <!-- 按钮组 -->
+            <div class="button-group">
+                <button onclick="calculatePayments()">付款计算</button>
+                <button class="secondary toggle-button" onclick="togglePaymentStages()">设置付款阶段</button>
+                <button class="secondary" onclick="saveResults()">保存</button>
+            </div>
+
+            <!-- 折叠的付款阶段设置 -->
+            <div class="payment-stages-container" id="paymentStagesContainer">
+                <h2>付款阶段</h2>
+                <table id="paymentStages">
+                    <thead>
+                        <tr>
+                            <th>阶段名称</th>
+                            <th>比例（%）</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- 默认阶段 -->
+                        <tr>
+                            <td><input type="text" value="预付款"></td>
+                            <td><input type="number" value="20" step="0.01" min="0" required oninput="checkPercentage()"></td>
+                            <td>
+                                <button class="secondary" onclick="removeStage(this)">删除</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" value="A阶段"></td>
+                            <td><input type="number" value="20" step="0.01" min="0" required oninput="checkPercentage()"></td>
+                            <td>
+                                <button class="secondary" onclick="removeStage(this)">删除</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" value="B阶段"></td>
+                            <td><input type="number" value="20" step="0.01" min="0" required oninput="checkPercentage()"></td>
+                            <td>
+                                <button class="secondary" onclick="removeStage(this)">删除</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" value="C阶段"></td>
+                            <td><input type="number" value="30" step="0.01" min="0" required oninput="checkPercentage()"></td>
+                            <td>
+                                <button class="secondary" onclick="removeStage(this)">删除</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" value="D阶段"></td>
+                            <td><input type="number" value="10" step="0.01" min="0" required oninput="checkPercentage()"></td>
+                            <td>
+                                <button class="secondary" onclick="removeStage(this)">删除</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="actions">
+                    <button onclick="addStage()">添加阶段</button>
+                    <button onclick="finishPaymentStages()">完成</button>
+                </div>
+                <div class="stats">
+                    <p>阶段数：<span id="stageCount">5</span>，比例总和：<span id="totalPercentage">100%</span></p>
+                </div>
+                <div class="error-message" id="errorMessage"></div>
+            </div>
+
+            <!-- 结果 -->
+            <div class="result" id="result">
+                <h2>计算结果</h2>
+                <p><span>总价（含税）：</span>¥<span id="withTax"></span> 元</p>
+                <p><span>总价（不含税）：</span>¥<span id="withoutTax"></span> 元</p>
+                <p><span>税率：</span><span id="taxRateValue"></span>%</p>
+                <p><span>增值税费用：</span>¥<span id="vatValue"></span> 元</p>
+                <h3>各阶段金额：</h3>
+                <table>
+                    <tr>
+                        <th>阶段名称</th>
+                        <th>比例（%）</th>
+                        <th>金额（元）</th>
+                        <th>金额大写</th>
+                        <th>付款状态</th>
+                        <th>备注</th>
+                    </tr>
+                    <tbody id="resultTableBody">
+                        <!-- 计算结果动态插入 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 保存/打开按钮 -->
+        <div class="save-open-container">
+            <button class="save-open-toggle-button" onclick="toggleSaveOpen()">保存/打开</button>
+            <div class="save-open-content" id="saveOpenContent">
+                <button onclick="saveResults()">保存</button>
+                <button onclick="openResults()">打开</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 计算不含税总价并更新含税总价
+        function updateWithoutTaxPrice() {
+            const withTax = parseFloat(document.getElementById('withTaxPrice').value);
+            const taxRate = parseFloat(document.getElementById('taxRate').value) / 100;
+
+            if (!isNaN(withTax) && !isNaN(taxRate)) {
+                const withoutTax = withTax / (1 + taxRate);
+                document.getElementById('withoutTaxPrice').value = withoutTax.toFixed(2);
+                updateVAT();
+            }
+        }
+
+        // 计算含税总价并更新不含税总价
+        function updateWithTaxPrice() {
+            const withoutTax = parseFloat(document.getElementById('withoutTaxPrice').value);
+            const taxRate = parseFloat(document.getElementById('taxRate').value) / 100;
+
+            if (!isNaN(withoutTax) && !isNaN(taxRate)) {
+                const withTax = withoutTax * (1 + taxRate);
+                document.getElementById('withTaxPrice').value = withTax.toFixed(2);
+                updateVAT();
+            }
+        }
+
+        // 计算增值税费用
+        function updateVAT() {
+            const withTax = parseFloat(document.getElementById('withTaxPrice').value);
+            const withoutTax = parseFloat(document.getElementById('withoutTaxPrice').value);
+            const taxRate = parseFloat(document.getElementById('taxRate').value) / 100;
+
+            if (!isNaN(withTax) && !isNaN(withoutTax) && !isNaN(taxRate)) {
+                const vat = withTax - withoutTax;
+                document.getElementById('vat').value = vat.toFixed(2);
+            }
+        }
+
+        // 添加付款阶段
+        function addStage() {
+            const table = document.getElementById('paymentStages');
+            const rowCount = table.rows.length;
+            const newRow = table.insertRow(rowCount);
+            const cell1 = newRow.insertCell(0);
+            const cell2 = newRow.insertCell(1);
+            const cell3 = newRow.insertCell(2);
+
+            const stageInput = document.createElement('input');
+            stageInput.type = 'text';
+            stageInput.placeholder = '阶段名称';
+            cell1.appendChild(stageInput);
+
+            const percentageInput = document.createElement('input');
+            percentageInput.type = 'number';
+            percentageInput.placeholder = '比例（%）';
+            percentageInput.step = '0.01';
+            percentageInput.min = '0';
+            percentageInput.required = true;
+            percentageInput.oninput = function () { checkPercentage(); };
+            cell2.appendChild(percentageInput);
+
+            const deleteButton = document.createElement('button');
+            deleteButton.classList.add('secondary');
+            deleteButton.textContent = '删除';
+            deleteButton.onclick = function () { removeStage(this); };
+            cell3.appendChild(deleteButton);
+
+            updateStageStats();
+        }
+
+        // 删除付款阶段
+        function removeStage(button) {
+            const row = button.parentElement.parentElement;
+            if (document.querySelectorAll('#paymentStages tbody tr').length > 1) {
+                row.parentNode.removeChild(row);
+                updateStageStats();
+            } else {
+                alert('至少保留一个付款阶段！');
+            }
+        }
+
+        // 更新阶段统计
+        function updateStageStats() {
+            const table = document.getElementById('paymentStages');
+            const rows = table.rows;
+            let totalPercentage = 0;
+            let stageCount = 0;
+
+            for (let i = 0; i < rows.length; i++) {
+                const percentageInput = rows[i].cells[1].querySelector('input');
+                if (percentageInput) {
+                    const percentage = parseFloat(percentageInput.value);
+                    if (!isNaN(percentage)) {
+                        totalPercentage += percentage;
+                    }
+                }
+                stageCount++;
+            }
+
+            document.getElementById('totalPercentage').textContent = `${totalPercentage.toFixed(2)}%`;
+            document.getElementById('stageCount').textContent = stageCount - 1;
+        }
+
+        // 检查比例是否超过100%
+        function checkPercentage() {
+            const table = document.getElementById('paymentStages');
+            const rows = table.rows;
+            let totalPercentage = 0;
+
+            for (let i = 0; i < rows.length; i++) {
+                const percentageInput = rows[i].cells[1].querySelector('input');
+                if (percentageInput) {
+                    const percentage = parseFloat(percentageInput.value);
+                    if (!isNaN(percentage)) {
+                        totalPercentage += percentage;
+                    }
+                }
+            }
+
+            const errorMessage = document.getElementById('errorMessage');
+            if (totalPercentage > 100) {
+                errorMessage.textContent = '各阶段比例总和不能超过100%！';
+                errorMessage.style.display = 'block';
+            } else {
+                errorMessage.style.display = 'none';
+            }
+
+            // 更新比例总和显示
+            document.getElementById('totalPercentage').textContent = `${totalPercentage.toFixed(2)}%`;
+        }
+
+        // 完成设置付款阶段
+        function finishPaymentStages() {
+            const container = document.getElementById('paymentStagesContainer');
+            const totalPercentage = parseFloat(document.getElementById('totalPercentage').textContent.replace('%', ''));
+            if (totalPercentage !== 100) {
+                alert('各阶段比例总和必须为100%！请重新输入。');
+                return;
+            }
+            container.style.display = 'none';
+        }
+
+        // 计算付款阶段金额
+        function calculatePayments() {
+            const withTax = parseFloat(document.getElementById('withTaxPrice').value);
+            const taxRate = parseFloat(document.getElementById('taxRate').value) / 100;
+
+            if (isNaN(withTax) || isNaN(taxRate)) {
+                document.getElementById('result').innerHTML = '<p style="color:red">请输入有效的数字！</p>';
+                return;
+            }
+
+            const stages = [];
+            const tableRows = document.querySelectorAll('#paymentStages tbody tr');
+            for (let row of tableRows) {
+                const [nameInput, percentageInput] = row.querySelectorAll('input');
+                const name = nameInput.value.trim();
+                const percentage = parseFloat(percentageInput.value);
+
+                if (!name || isNaN(percentage)) {
+                    document.getElementById('result').innerHTML = '<p style="color:red">请填写完整的阶段信息！</p>';
+                    return;
+                }
+
+                stages.push({ name, percentage });
+            }
+
+            const totalPercentage = stages.reduce((sum, stage) => sum + stage.percentage, 0);
+            if (totalPercentage !== 100) {
+                document.getElementById('result').innerHTML = '<p style="color:red">各阶段总比例必须为100%！</p>';
+                return;
+            }
+
+            const results = stages.map(stage => {
+                const amount = (withTax * stage.percentage / 100).toFixed(2);
+                const amountUpper = convertToUpperCase(amount);
+                return {
+                    name: stage.name,
+                    percentage: stage.percentage,
+                    amount: parseFloat(amount),
+                    amountUpper: amountUpper,
+                    paymentStatus: false,
+                    remark: ''
+                };
+            });
+
+            document.getElementById('withTax').textContent = withTax.toFixed(2);
+            document.getElementById('withoutTax').textContent = parseFloat(document.getElementById('withoutTaxPrice').value).toFixed(2);
+            document.getElementById('taxRateValue').textContent = parseFloat(document.getElementById('taxRate').value);
+            document.getElementById('vatValue').textContent = parseFloat(document.getElementById('vat').value);
+
+            const resultTableBody = document.getElementById('resultTableBody');
+            resultTableBody.innerHTML = '';
+            results.forEach(result => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${result.name}</td>
+                    <td>${result.percentage}%</td>
+                    <td>¥${result.amount}</td>
+                    <td>${result.amountUpper}</td>
+                    <td><input type="checkbox" onchange="updatePaymentStatus(this, '${result.name}')"></td>
+                    <td><input type="text" placeholder="备注"></td>
+                `;
+                resultTableBody.appendChild(row);
+            });
+        }
+
+        // 折叠付款阶段设置
+        function togglePaymentStages() {
+            const container = document.getElementById('paymentStagesContainer');
+            const toggleButton = document.querySelector('.toggle-button');
+            container.style.display = container.style.display === 'block' ? 'none' : 'block';
+            toggleButton.classList.toggle('expanded');
+        }
+
+        // 显示/隐藏说明
+        function toggleHelp() {
+            const helpContent = document.getElementById('helpContent');
+            helpContent.style.display = helpContent.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // 更新付款状态
+        function updatePaymentStatus(checkbox, stageName) {
+            const tableRows = document.querySelectorAll('#resultTableBody tr');
+            tableRows.forEach(row => {
+                const name = row.cells[0].textContent.trim();
+                if (name === stageName) {
+                    row.cells[4].querySelector('input').checked = checkbox.checked;
+                }
+            });
+        }
+
+        // 将金额转换为大写
+        function convertToUpperCase(amount) {
+            const units = ['', '拾', '佰', '仟', '万', '拾', '佰', '仟', '亿'];
+            const digits = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
+            let result = '';
+            let integerPart = Math.floor(amount);
+            let decimalPart = (amount - integerPart).toFixed(2).slice(2);
+
+            // 处理整数部分
+            if (integerPart > 0) {
+                let unitIndex = 0;
+                while (integerPart > 0) {
+                    let digit = integerPart % 10;
+                    if (digit > 0) {
+                        result = digits[digit] + units[unitIndex] + result;
+                    } else if (result !== '') {
+                        result = digits[0] + result;
+                    }
+                    integerPart = Math.floor(integerPart / 10);
+                    unitIndex++;
+                }
+            } else {
+                result = digits[0] + result;
+            }
+
+            // 处理小数部分
+            if (decimalPart[0] !== '0') {
+                result += digits[decimalPart[0].charCodeAt(0) - 48] + '角';
+            }
+            if (decimalPart[1] !== '0') {
+                result += digits[decimalPart[1].charCodeAt(0) - 48] + '分';
+            }
+
+            return result;
+        }
+
+        // 保存计算结果为TXT文件
+        function saveResults() {
+            const projectName = document.getElementById('projectName').value;
+            if (!projectName) {
+                alert("项目名称不能为空！");
+                return;
+            }
+
+            const withTax = parseFloat(document.getElementById('withTaxPrice').value);
+            const withoutTax = parseFloat(document.getElementById('withoutTaxPrice').value);
+            const taxRate = parseFloat(document.getElementById('taxRate').value);
+            const vat = parseFloat(document.getElementById('vat').value);
+
+            const stages = [];
+            const tableRows = document.querySelectorAll('#paymentStages tbody tr');
+            for (let row of tableRows) {
+                const [nameInput, percentageInput] = row.querySelectorAll('input');
+                const name = nameInput.value.trim();
+                const percentage = parseFloat(percentageInput.value);
+
+                if (!name || isNaN(percentage)) {
+                    alert('请填写完整的阶段信息！');
+                    return;
+                }
+
+                stages.push({ name, percentage });
+            }
+
+            const results = stages.map(stage => {
+                const amount = (withTax * stage.percentage / 100).toFixed(2);
+                const amountUpper = convertToUpperCase(amount);
+                return {
+                    name: stage.name,
+                    percentage: stage.percentage,
+                    amount: parseFloat(amount),
+                    amountUpper: amountUpper,
+                    paymentStatus: false,
+                    remark: ''
+                };
+            });
+
+            let txtContent = `项目名称：${projectName}\n`;
+            txtContent += `总价（含税）：¥${withTax.toFixed(2)} 元\n`;
+            txtContent += `总价（不含税）：¥${withoutTax.toFixed(2)} 元\n`;
+            txtContent += `税率：${taxRate}%\n`;
+            txtContent += `增值税费用：¥${vat.toFixed(2)} 元\n`;
+            txtContent += `各阶段金额：\n`;
+
+            results.forEach(result => {
+                txtContent += `${result.name}：${result.percentage}% - ¥${result.amount.toFixed(2)} (${result.amountUpper})\n`;
+            });
+
+            // 创建LOG文件夹（如果不存在）
+            const logFolderPath = 'LOG';
+            if (!fs.existsSync(logFolderPath)) {
+                fs.mkdirSync(logFolderPath);
+            }
+
+            // 保存文件
+            const fileName = `${projectName}-${new Date().toISOString().replace(/[:\/]/g, '-')}.txt`;
+            const filePath = path.join(logFolderPath, fileName);
+            fs.writeFileSync(filePath, txtContent);
+
+            alert('保存成功！');
+        }
+
+        // 打开TXT文件并回显数据
+        function openResults() {
+            const projectName = document.getElementById('projectName').value;
+            if (!projectName) {
+                alert("项目名称不能为空！");
+                return;
+            }
+
+            const logFolderPath = 'LOG';
+            const fileName = `${projectName}-${new Date().toISOString().replace(/[:\/]/g, '-')}.txt`;
+            const filePath = path.join(logFolderPath, fileName);
+
+            if (!fs.existsSync(filePath)) {
+                alert('文件不存在！');
+                return;
+            }
+
+            const txtContent = fs.readFileSync(filePath, 'utf-8');
+            const lines = txtContent.split('\n');
+
+            // 回显数据
+            document.getElementById('projectName').value = lines[0].split('：')[1];
+            document.getElementById('withTaxPrice').value = lines[1].split('：')[1].replace('¥', '').replace(' 元', '');
+            document.getElementById('withoutTaxPrice').value = lines[2].split('：')[1].replace('¥', '').replace(' 元', '');
+            document.getElementById('taxRate').value = lines[3].split('：')[1].replace('%', '');
+            document.getElementById('vat').value = lines[4].split('：')[1].replace('¥', '').replace(' 元', '');
+
+            const stages = [];
+            for (let i = 5; i < lines.length; i++) {
+                if (lines[i].trim() === '') continue;
+                const [name, percentageAmount] = lines[i].split('：');
+                const [percentage, amount] = percentageAmount.split('-');
+                stages.push({
+                    name: name.trim(),
+                    percentage: parseFloat(percentage.replace('%', '').trim()),
+                    amount: parseFloat(amount.replace('¥', '').replace('(', '').replace(')', '').trim())
+                });
+            }
+
+            // 清空现有阶段
+            const paymentStagesTable = document.getElementById('paymentStages');
+            paymentStagesTable.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>阶段名称</th>
+                        <th>比例（%）</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            `;
+
+            // 添加新阶段
+            stages.forEach(stage => {
+                const newRow = paymentStagesTable.insertRow(-1);
+                const cell1 = newRow.insertCell(0);
+                const cell2 = newRow.insertCell(1);
+                const cell3 = newRow.insertCell(2);
+
+                const stageInput = document.createElement('input');
+                stageInput.type = 'text';
+                stageInput.value = stage.name;
+                cell1.appendChild(stageInput);
+
+                const percentageInput = document.createElement('input');
+                percentageInput.type = 'number';
+                percentageInput.value = stage.percentage.toFixed(2);
+                percentageInput.step = '0.01';
+                percentageInput.min = '0';
+                percentageInput.required = true;
+                percentageInput.oninput = function () { checkPercentage(); };
+                cell2.appendChild(percentageInput);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.classList.add('secondary');
+                deleteButton.textContent = '删除';
+                deleteButton.onclick = function () { removeStage(this); };
+                cell3.appendChild(deleteButton);
+            });
+
+            updateStageStats();
+            alert('数据已回显！');
+        }
+
+        // 折叠保存/打开
+        function toggleSaveOpen() {
+            const saveOpenContent = document.getElementById('saveOpenContent');
+            saveOpenContent.style.display = saveOpenContent.style.display === 'block' ? 'none' : 'block';
+        }
+    </script>
+</body>
+</html>
