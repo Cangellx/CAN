@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIM合同预算计算器V1.0</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px auto;
+            width: 600px;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 32%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: left;
+        }
+        .double-input {
+            display: flex;
+            justify-content: space-between;
+        }
+        .double-input input,
+        .double-input select {
+            width: 48%;
+        }
+    </style>
+</head>
+<body>
+    <h2 style="text-align: center;">BIM合同预算计算器 V1.0</h2>
+    
+    <div class="input-group">
+        <label for="projectName">项目名称：</label>
+        <input type="text" id="projectName" placeholder="请输入项目名称">
+    </div>
+
+    <div class="input-group double-input">
+        <div style="width: 48%;">
+            <label for="buildingType">建筑类型：</label>
+            <select id="buildingType" onchange="setDefaultPrice()">
+                <option value="住宅">住宅</option>
+                <option value="公建">公建</option>
+                <option value="景观">景观</option>
+                <option value="其他">其他</option>
+            </select>
+        </div>
+        <div style="width: 48%;">
+            <label for="unitPrice">单价（元/平方米）：</label>
+            <input type="number" id="unitPrice" placeholder="请输入单价">
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label for="totalArea">总建筑面积（平方米）：</label>
+        <input type="number" id="totalArea" placeholder="请输入总建筑面积">
+    </div>
+
+    <div class="button-group">
+        <button onclick="calculateBudget()">计算预算</button>
+        <button onclick="saveData()">保存</button>
+        <button onclick="openFile()">打开</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        function setDefaultPrice() {
+            const buildingType = document.getElementById('buildingType').value;
+            const unitPriceInput = document.getElementById('unitPrice');
+            const defaultPrices = {
+                '住宅': 15,
+                '公建': 20,
+                '景观': 20,
+                '其他': 10
+            };
+            unitPriceInput.value = defaultPrices[buildingType];
+        }
+
+        function calculateBudget() {
+            // 获取输入值
+            const projectName = document.getElementById('projectName').value;
+            const buildingType = document.getElementById('buildingType').value;
+            const unitPrice = parseFloat(document.getElementById('unitPrice').value);
+            const totalArea = parseFloat(document.getElementById('totalArea').value);
+
+            // 检查输入是否有效
+            if (!projectName || isNaN(unitPrice) || isNaN(totalArea)) {
+                document.getElementById('result').innerHTML = `<p style="color: red;">请输入完整信息！</p>`;
+                return;
+            }
+
+            // 计算预算
+            const budget = unitPrice * totalArea;
+
+            // 显示结果
+            document.getElementById('result').innerHTML = `
+                <p>项目名称：${projectName}</p>
+                <p>建筑类型：${buildingType}</p>
+                <p>单价：￥${unitPrice} 元/平方米</p>
+                <p>总建筑面积：${totalArea} 平方米</p>
+                <p>预算总额：￥${budget.toFixed(2)}</p>
+            `;
+        }
+
+        function saveData() {
+            // 获取输入值
+            const projectName = document.getElementById('projectName').value;
+            const buildingType = document.getElementById('buildingType').value;
+            const unitPrice = parseFloat(document.getElementById('unitPrice').value);
+            const totalArea = parseFloat(document.getElementById('totalArea').value);
+
+            // 检查输入是否有效
+            if (!projectName || isNaN(unitPrice) || isNaN(totalArea)) {
+                alert("请输入完整信息！");
+                return;
+            }
+
+            // 准备保存的数据
+            const data = `
+                项目名称：${projectName}
+                建筑类型：${buildingType}
+                单价：${unitPrice}
+                总建筑面积：${totalArea}
+            `;
+
+            // 创建Blob对象
+            const blob = new Blob([data], { type: 'text/plain' });
+
+            // 创建下载链接
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${projectName}-BIM合同预算-${new Date().toISOString().replace(/[:\/]/g, '-')}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            alert("数据已保存为TXT文件！");
+        }
+
+        function openFile() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'text/plain';
+            input.onchange = function (e) {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function (event) {
+                    const content = event.target.result;
+                    const data = content.split('\n').reduce((acc, line) => {
+                        const [key, value] = line.split('：');
+                        acc[key.trim()] = value.trim();
+                        return acc;
+                    }, {});
+
+                    // 填充数据到输入框
+                    document.getElementById('projectName').value = data['项目名称'] || '';
+                    document.getElementById('buildingType').value = data['建筑类型'] || '';
+                    document.getElementById('unitPrice').value = data['单价'] || '';
+                    document.getElementById('totalArea').value = data['总建筑面积'] || '';
+
+                    // 显示结果
+                    document.getElementById('result').innerHTML = `
+                        <p>项目名称：${data['项目名称'] || ''}</p>
+                        <p>建筑类型：${data['建筑类型'] || ''}</p>
+                        <p>单价：￥${data['单价'] || 0} 元/平方米</p>
+                        <p>总建筑面积：${data['总建筑面积'] || 0} 平方米</p>
+                        <p>预算总额：￥${(parseFloat(data['单价'] || 0) * parseFloat(data['总建筑面积'] || 0)).toFixed(2)}</p>
+                    `;
+                };
+
+                reader.readAsText(file);
+            };
+
+            input.click();
+        }
+    </script>
+</body>
+</html>
